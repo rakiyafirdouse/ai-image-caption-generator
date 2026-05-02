@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Image Caption Generator</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome (WORKING CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+
+    /* 🌿 Soft elegant gradient (NOT loud) */
+    background: linear-gradient(135deg, #e0e7ff, #f1f5f9);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* 💎 Glass card */
+.container {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 420px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* 🔥 Title */
+h1 {
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+h1 i {
+    color: #6366f1;
+    margin-right: 10px;
+}
+
+/* 📁 File input */
+input[type="file"] {
+    margin: 15px 0;
+}
+
+/* 🚀 Button */
+button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(99,102,241,0.4);
+}
+
+/* 🖼 Image */
+img {
+    margin-top: 20px;
+    max-width: 100%;
+    border-radius: 15px;
+}
+
+/* 📝 Caption */
+#result {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #111827;
+}
+
+/* 🔹 Footer */
+.footer {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #6b7280;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1><i class="fas fa-brain"></i> AI Caption Generator</h1>
+
+    <input type="file" id="imageInput">
+
+    <br>
+    <button onclick="uploadImage()">Generate Caption</button>
+
+    <img id="preview">
+
+    <div id="result"></div>
+
+    <div class="footer">
+        Powered by Deep Learning (CNN + LSTM)
+    </div>
+</div>
+
+<script>
+function uploadImage(){
+    let file = document.getElementById("imageInput").files[0];
+
+    if(!file){
+        alert("Select image first");
+        return;
+    }
+
+    document.getElementById("preview").src = URL.createObjectURL(file);
+
+    let data = new FormData();
+    data.append("image", file);
+
+    document.getElementById("result").innerHTML = "Generating caption...";
+
+    fetch("/predict", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.caption) {
+            let text = data.caption;
+            text = text.charAt(0).toUpperCase() + text.slice(1) + ".";
+            document.getElementById("result").innerHTML = "Caption: " + text;
+        } else {
+            document.getElementById("result").innerHTML = "Error: " + data.error;
+        }
+    })
+    .catch(() => {
+        document.getElementById("result").innerHTML = "Request failed";
+    });
+}
+</script>
+
+</body>
+</html>

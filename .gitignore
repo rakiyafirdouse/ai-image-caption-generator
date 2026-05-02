@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+temp.jpg
+.env
+
+# Ignore large model files
+*.h5
+*.pkl
+
+# Optional
+dataset/
